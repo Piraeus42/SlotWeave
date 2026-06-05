@@ -1,59 +1,80 @@
-﻿# SlotWeave · Luck be a Landlord
+# SlotWeave · Luck be a Landlord
 
-Godot 3.4.4 运行时 Mod 注入框架，针对《幸运房东》移植。提供两套互补 API：**GameStateBus**（纯 C# 内存直读）和 **Patch**（GDScript 源码注入）。
+Godot 3.4.4 runtime mod injection framework for [*Luck be a Landlord*](https://store.steampowered.com/app/1404850/Luck_be_a_Landlord/). Provides two complementary APIs: **GameStateBus** (pure C# memory reads) and **Patch** (GDScript source injection).
 
-> 架构: [`docs/architecture-final.md`](docs/architecture-final.md) · IDA 数据: [`docs/ida_analysis_results.md`](docs/ida_analysis_results.md)
-
----
-
-## ⚠️ 版本绑定
-
-所有引擎函数 RVA 绑定到 Godot 3.4.4 build `419e713a2`。**游戏更新后 RVA 可能失效**，需重新验证。
+> **中文文档**: [`README_zh.md`](README_zh.md)
 
 ---
 
-## 快速开始
+> ## ⚖️ Licensing & Content Policy
+>
+> **SlotWeave and all official mods developed under this framework:**
+>
+> - ❌ Do **NOT** include, bundle, or redistribute **any** original game source code
+> - ❌ Do **NOT** include, bundle, or redistribute **any** original game art assets, audio, or data files
+> - ❌ Do **NOT** modify or patch the game binary on disk
+> - ✅ Operate entirely through **runtime code injection** — mods are applied in memory at load time
+> - ✅ Modder code is **100% original** — only the transformation logic written by the modder is distributed
+> - ✅ Game assets and original scripts remain in the game installation and are never copied or repackaged
+>
+> **This is a deliberate, permanent design choice.** The framework injects behavior at runtime without ever shipping the game's intellectual property. Mods are transformers, not derivatives.
 
-### 安装
+> **Architecture**: [`docs/architecture-final.md`](docs/architecture-final.md) · **IDA data**: [`docs/ida_analysis_results.md`](docs/ida_analysis_results.md)
 
-1. `winmm.dll` → 游戏根目录（与 `Luck be a Landlord.exe` 同级）
-2. `SlotWeave/core/` → 复制到游戏根目录
-3. Mod → `SlotWeave/mods/<ModId>/`（每个 Mod 一个文件夹，内含 `manifest.json` + `.dll`）
-4. 双击 `run-lbl.bat`（自动检测安装 .NET 8 运行时 + 启动游戏）
+---
+
+## ⚠️ Version Pinning
+
+All engine function RVAs are pinned to Godot 3.4.4 build `419e713a2`. **Game updates may break RVA offsets** and require re-verification.
+
+---
+
+## Quick Start
+
+### Installation
+
+1. Copy `winmm.dll` next to `Luck be a Landlord.exe`
+2. Copy the `SlotWeave/` folder to the same directory
+3. Drop mods into `SlotWeave/mods/<ModId>/` (one folder per mod, with `manifest.json` + `.dll`)
+4. Launch — .NET 8 Desktop Runtime required
 
 ```
 Luck be a Landlord/
 ├── Luck be a Landlord.exe
-├── winmm.dll
+├── winmm.dll              ← SlotWeave loader (proxy DLL)
 ├── SlotWeave/
-│   ├── core/           # SlotWeave 运行时
-│   ├── mods/           # Mod
-│   ├── configs/        # 配置（自动生成）
-│   └── SlotWeave.log     # 日志
+│   ├── core/              ← Framework runtime
+│   ├── mods/              ← Mod assemblies
+│   ├── configs/           ← Auto-generated config
+│   └── SlotWeave.log      ← Debug log
 ```
 
-### 环境变量
+### Debug Environment Variables
 
-| 变量 | 用途 |
-|------|------|
-| `GDWEAVE_CONSOLE=1` | 分配控制台窗口（调试必备） |
-| `GDWEAVE_DEBUG=1` | Verbose 日志 |
-| `GDWEAVE_DUMP_SOURCE=1` | dump 原始脚本到 `scripts/` |
-| `GDWEAVE_DUMP_PATCHED=1` | dump patched 脚本到 `scripts_patched/` |
-| `GDWEAVE_STRICT_SANDBOX=1` | patched 源码有语法错误时回退原始源码 |
-| `GDWEAVE_NO_CACHE=1` | 禁用 patch 缓存 |
+| Variable | Effect |
+|----------|--------|
+| `GDWEAVE_CONSOLE=1` | Allocate console window (essential for debugging) |
+| `GDWEAVE_DEBUG=1` | Verbose logging |
+| `GDWEAVE_DUMP_SOURCE=1` | Dump original scripts to `scripts/` |
+| `GDWEAVE_DUMP_PATCHED=1` | Dump patched scripts with provenance annotations to `scripts_patched/` |
+| `GDWEAVE_STRICT_SANDBOX=1` | Refuse to write scripts with syntax errors — fall back to original |
+| `GDWEAVE_NO_CACHE=1` | Disable the patch cache |
 
-### 构建
+### Building
 
 ```bash
+# Build and deploy to game directory
 dotnet build -c Debug -p:SlotWeavePath="D:\steam\steamapps\common\Luck be a Landlord"
-```
 
-调试启动：`run-lbl-debug.bat`（构建 + 部署 DiagnosticMod + 控制台 + 启动）
+# Rust loader
+cargo build --release
+```
 
 ---
 
-## Mod 开发
+## Mod Development
+
+> **Full guide**: [`docs/mod-development-guide.md`](docs/mod-development-guide.md)
 
 ### manifest.json
 
@@ -66,21 +87,21 @@ dotnet build -c Debug -p:SlotWeavePath="D:\steam\steamapps\common\Luck be a Land
 }
 ```
 
-**字段名 PascalCase**：`Id` 不是 `id`，`AssemblyPath` 不是 `assemblyPath`。
+**Field names are PascalCase**: `Id` not `id`, `AssemblyPath` not `assemblyPath`.
 
-### 生命周期
+### Lifecycle
 
 ```
-DLL 载入 → OnLoad() → OnInitialize() → Script Patches → GameStateBus 启动 → 游戏运行 → OnUnload() → Dispose()
+Assembly loaded → OnLoad() → OnInitialize() → Script Patches → GameStateBus starts → Game runs → OnUnload() → Dispose()
 ```
 
 ---
 
-## API 一：GameStateBus（新）
+## API 1: GameStateBus
 
-**纯 C# 读取游戏运行时状态。不需要写 GDScript。**
+**Read game state from C# without writing any GDScript.**
 
-### 订阅每帧快照
+### Subscribe to Per-Frame Snapshots
 
 ```csharp
 using SlotWeave;
@@ -99,7 +120,7 @@ public class Mod : IMod
 }
 ```
 
-### 注册数据读取器
+### Register a Data Reader
 
 ```csharp
 using SlotWeave.GameState;
@@ -114,34 +135,34 @@ public class MyReader : IGameStateReader
     }
 }
 
-// 在构造函数中注册:
+// In your mod constructor:
 mi.RegisterGameStateReader(new MyReader());
 ```
 
-### EngineObjectReader 方法
+### EngineObjectReader Methods
 
-| 方法 | 说明 |
-|------|------|
-| `FindNode("Main/Coins")` | 按 Godot 路径查找节点 |
-| `GetChildNames(node)` | 枚举子节点名称（用于发现树结构） |
-| `ReadScriptProp(node, "propName")` | 通过 `GDScriptInstance::get` 读 GDScript 变量 |
+| Method | Description |
+|--------|-------------|
+| `FindNode("Main/Coins")` | Find node by Godot path |
+| `GetChildNames(node)` | Enumerate child node names (discover tree structure) |
+| `ReadScriptProp(node, "propName")` | Read a GDScript variable via `GDScriptInstance::get` |
 
 ### GameStateSnapshot
 
 ```csharp
 public record GameStateSnapshot
 {
-    long TickCount;           // 帧时间戳
-    float Delta;              // idle delta
-    Dictionary<string, object?> Extra;  // 扩展数据
+    long TickCount;                              // Frame timestamp
+    float Delta;                                 // Idle delta time
+    Dictionary<string, object?> Extra;           // Extension data
 }
 ```
 
 ---
 
-## API 二：Patch（语法安全增强版）
+## API 2: Patch (Syntax-Safe)
 
-### 声明式 `[Patch]`
+### Declarative `[Patch]`
 
 ```csharp
 using SlotWeave.Scripting;
@@ -157,28 +178,26 @@ static class CoinsPatch
 }
 ```
 
-| 属性 | 位置 | 签名 |
-|------|------|------|
-| `[Prefix]` | 函数体之前 | `static string Code()` |
-| `[Postfix]` | 函数体之后 | `static string Code()` |
-| `[Replace]` | 替换整个函数体 | `static string Code(string original)` |
+| Attribute | Placement | Signature |
+|-----------|-----------|-----------|
+| `[Prefix]` | Before function body | `static string Code()` |
+| `[Postfix]` | After function body | `static string Code()` |
+| `[Replace]` | Replace entire function body | `static string Code(string original)` |
 
-### EmbeddedGd：消灭字符串转义
+### EmbeddedGd: Write GDScript in `.gd` Files
 
-**不要再在 C# 里拼 GDScript 字符串。** 把 GDScript 写成独立的 `.gd` 文件，作为 `EmbeddedResource`。
+Don't embed GDScript as escaped C# strings. Write `.gd` files as `EmbeddedResource`:
 
-项目结构：
 ```
 MyMod/
-├── MyMod.csproj          # <EmbeddedResource Include="Patches/gd/*.gd" />
+├── MyMod.csproj              # <EmbeddedResource Include="Patches/gd/*.gd" />
 ├── Mod.cs
 └── Patches/
     ├── CoinsPatch.cs
     └── gd/
-        └── coins_replace.gd    ← 纯 GDScript，IDE 语法高亮
+        └── coins_replace.gd   ← Pure GDScript, full IDE syntax highlighting
 ```
 
-C# 侧一行调用：
 ```csharp
 [Patch("res://Main.tscn::1", "get_coins")]
 static class CoinsPatch
@@ -189,41 +208,42 @@ static class CoinsPatch
 }
 ```
 
-`.csproj` 添加：
-```xml
-<ItemGroup>
-  <EmbeddedResource Include="Patches/gd/*.gd" />
-</ItemGroup>
-```
+### Automatic Syntax Validation (GdTokenizer)
 
-### 语法自动检查（GdTokenizer）
-
-每次 Patch 后，框架自动对 patched 源码做 tokenizer 级语法检查。
-有错误时输出**精确行号**：
+Every patched script is tokenizer-validated after modification. Syntax errors include the **exact line number**:
 
 ```
 [WARN] #42 [res://Slot Icon.tscn::1] Patched source has syntax error at line 128: Unclosed string literal
 ```
 
-设 `GDWEAVE_STRICT_SANDBOX=1` 则在检测到错误时**拒绝写入**，回退原始源码，游戏不会崩。
+Set `GDWEAVE_STRICT_SANDBOX=1` to **refuse writing** invalid scripts — the game won't crash from malformed patches.
 
-### 重载循环断路器
+### Reload Loop Breaker
 
-如果某个 SourceMod 产生无效 GDScript 导致 Godot 反复重载同一脚本（≥3 次 / 2 秒），框架自动将该路径加入**黑名单**，后续 reload 跳过 Pipeline 直接用原始源码：
+If a SourceMod produces invalid GDScript that causes Godot to endlessly reload the same script (≥3 times in 2 seconds), the path is automatically **blacklisted**:
 
 ```
 [LOOP-BREAK] res://Tooltip.tscn::1 reloaded 3 times in 150ms — blacklisting
 ```
 
-### ISourceMod 低级 API
+### ISourceMod Low-Level API
 
 ```csharp
 using SlotWeave.Modding;
 
 public class MySourceMod : ISourceMod
 {
+    public string? Sentinel => "func _my_helper"; // Framework auto-guard
+    public int Priority => 10;                    // Run before lower-priority mods
     public bool ShouldRun(string path) => path == "res://Main.tscn::1";
-    public string Modify(string path, string source) => source.Replace("a", "b");
+
+    public string Modify(string path, string source)
+    {
+        // Use ReplaceHelper for safe function renames
+        source = ReplaceHelper.ReplaceCall(source, "rand_range", "_my_rng_range");
+        source = ReplaceHelper.AppendCode(source, MyHelpers);
+        return source;
+    }
 }
 
 mi.RegisterSourceMod(new MySourceMod());
@@ -231,7 +251,7 @@ mi.RegisterSourceMod(new MySourceMod());
 
 ---
 
-## IModInterface 完整参考
+## IModInterface Reference
 
 ```csharp
 public interface IModInterface
@@ -244,10 +264,10 @@ public interface IModInterface
     T ReadConfig<T>() where T : class, new();
     void WriteConfig<T>(T config);
 
-    void RegisterSourceMod(ISourceMod mod);          // Patch API
-    void Subscribe<T>(Action<T> handler);            // 事件订阅
+    void RegisterSourceMod(ISourceMod mod);
+    void Subscribe<T>(Action<T> handler);
 
-    void RegisterGameStateReader(IGameStateReader r);   // GameState API
+    void RegisterGameStateReader(IGameStateReader r);
     void UnregisterGameStateReader(IGameStateReader r);
 
     void ClearCache();
@@ -256,25 +276,31 @@ public interface IModInterface
 
 ---
 
-## 日志
+## Logging
 
 ```csharp
 var log = mi.Logger.ForContext("SourceContext", "MyMod");
 log.Information("Mod loaded");
-log.Debug("Path={Path}", mi.GameDir);  // 仅 GDWEAVE_DEBUG=1
+log.Debug("Path={Path}", mi.GameDir);  // Only when GDWEAVE_DEBUG=1
 log.Warning("Warning message");
 log.Error(exception, "Fatal error");
 ```
 
 ---
 
-## 故障排查
+## Troubleshooting
 
-| 症状 | 检查 |
-|------|------|
-| `HostingError(InvalidConfigFile)` | 没装 .NET 8 运行时，用 `run-lbl.bat` 自动安装 |
-| 游戏闪退 | `SlotWeave.log` 最后几行 |
-| Mod 未生效 | manifest.json 字段名 PascalCase？path/function 匹配？ |
-| 控制台无输出 | 设了 `GDWEAVE_CONSOLE=1`？ |
-| patched 脚本语法报错 | 设 `GDWEAVE_DUMP_PATCHED=1` 查看源码；用 `EmbeddedGd` 替代字符串拼接 |
-| 游戏更新后崩溃 | RVA 可能已变，等待框架更新 |
+| Symptom | Check |
+|---------|-------|
+| `HostingError(InvalidConfigFile)` | .NET 8 Desktop Runtime not installed |
+| Game crashes on launch | Last lines of `SlotWeave.log` |
+| Mod not working | Are manifest field names PascalCase? Path/function matching? |
+| No console output | Set `GDWEAVE_CONSOLE=1`? |
+| Patched script syntax error | Set `GDWEAVE_DUMP_PATCHED=1` to inspect; use `EmbeddedGd` instead of string concatenation |
+| Crash after game update | RVAs may have changed; wait for framework update |
+
+---
+
+## Credits
+
+SlotWeave is an independent fork of [GDWeave](https://github.com/NotNite/GDWeave) by [NotNite](https://github.com/NotNite). Licensed under the same terms as the upstream project.
