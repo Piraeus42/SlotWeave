@@ -4,7 +4,7 @@ Godot 3.4.4 runtime mod injection framework for [*Luck be a Landlord*](https://s
 
 <div align="center">
 
-**English** · [简体中文](README_zh.md)
+**English** · [简体中文](https://github.com/Piraeus42/SlotWeave/blob/main/README_zh.md)
 
 </div>
 

@@ -4,7 +4,7 @@ Godot 3.4.4 运行时 Mod 注入框架，针对《幸运房东》移植。提供
 
 <div align="center">
 
-[English](README.md) · **简体中文**
+[English](https://github.com/Piraeus42/SlotWeave/blob/main/README.md) · **简体中文**
 
 </div>
 
