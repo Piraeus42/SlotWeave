@@ -9,6 +9,10 @@ target/
 
 thunderstore/
 
+# Build and run scripts (local-use only)
+*.bat
+*.ps1
+
 # Debug / temp artifacts
 
 # Engine source (do not commit)
