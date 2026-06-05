@@ -2,7 +2,11 @@
 
 Godot 3.4.4 runtime mod injection framework for [*Luck be a Landlord*](https://store.steampowered.com/app/1404850/Luck_be_a_Landlord/). Provides two complementary APIs: **GameStateBus** (pure C# memory reads) and **Patch** (GDScript source injection).
 
-> **中文文档**: [`README_zh.md`](README_zh.md)
+<div align="center">
+
+**English** · [简体中文](README_zh.md)
+
+</div>
 
 ---
 

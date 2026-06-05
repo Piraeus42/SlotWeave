@@ -2,7 +2,13 @@
 
 Godot 3.4.4 运行时 Mod 注入框架，针对《幸运房东》移植。提供两套互补 API：**GameStateBus**（纯 C# 内存直读）和 **Patch**（GDScript 源码注入）。
 
-> 架构: [`docs/architecture-final.md`](docs/architecture-final.md) · IDA 数据: [`docs/ida_analysis_results.md`](docs/ida_analysis_results.md)
+<div align="center">
+
+[English](README.md) · **简体中文**
+
+</div>
+
+> 架构: [`docs/architecture.md`](docs/architecture.md) · IDA 数据: [`docs/ida_analysis_results.md`](docs/ida_analysis_results.md)
 
 ---
 
