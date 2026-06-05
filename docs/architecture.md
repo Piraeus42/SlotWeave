@@ -192,7 +192,6 @@ Invalidated on: source change, mod list change, mod version bump, SlotWeave vers
 
 ## Further Reference
 
-- **IDA analysis**: [`ida_analysis_results.md`](ida_analysis_results.md) — full reverse-engineering data
 - **Engine internals**: [`tscn_builtin_script_loading_chain.md`](tscn_builtin_script_loading_chain.md) — Godot's TSCN script loading chain
 - **Binary patterns**: [`patterns.txt`](patterns.txt) — signature scan patterns for `GDScript::reload()`
 - **Mod development**: [`mod-development-guide.md`](mod-development-guide.md) — Sentinel, Priority, ReplaceHelper, best practices

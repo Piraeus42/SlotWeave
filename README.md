@@ -30,7 +30,7 @@ SlotWeave gives you **two complementary APIs** to mod the game — no Unity, no 
 - **EventBus + Cache** — subscribe to load-time events. Patched sources are SHA256-cached so mods don't recompile every time.
 - **Provenance tracking** — dump patched scripts with per-line `[ModName]` annotations for debugging.
 
-> **Architecture**: [`docs/architecture.md`](docs/architecture.md) · **IDA data**: [`docs/ida_analysis_results.md`](docs/ida_analysis_results.md) · **Mod guide**: [`docs/mod-development-guide.md`](docs/mod-development-guide.md)
+> **Architecture**: [`docs/architecture.md`](docs/architecture.md) · **Mod guide**: [`docs/mod-development-guide.md`](docs/mod-development-guide.md)
 
 ---
 
@@ -66,7 +66,7 @@ Luck be a Landlord/
 ### Building from Source
 
 ```bash
-dotnet build -c Debug -p:SlotWeavePath="D:\steam\steamapps\common\Luck be a Landlord"
+dotnet build -c Debug -p:SlotWeavePath="<YOUR_GAME_PATH>"
 cargo build --release   # Rust loader
 ```
 

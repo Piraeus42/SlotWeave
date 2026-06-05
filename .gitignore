@@ -16,6 +16,9 @@ thunderstore/
 # Build artifacts (NuGet + compiled output)
 core/
 
+# Reverse-engineering data (keep locally, not public)
+docs/ida_analysis_results.md
+
 # Debug / temp artifacts
 
 # Engine source (do not commit)
