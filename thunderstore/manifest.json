@@ -1,7 +1,0 @@
-{
-  "name": "GDWeave",
-  "version_number": "2.0.14",
-  "website_url": "https://github.com/NotNite/GDWeave",
-  "description": "Mod loader & runtime script patching for Godot",
-  "dependencies": []
-}

@@ -8,3 +8,17 @@ obj/
 target/
 
 thunderstore/
+
+# Debug / temp artifacts
+
+# Engine source (do not commit)
+source_code/
+
+# Old documentation archives
+**/oldDocs/
+
+# Dumped game scripts
+scripts/
+
+# Claude session data
+.claude/

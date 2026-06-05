@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Version>1.0.0</Version>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- 调整此路径为你的 SlotWeave.dll 位置 -->
+        <!-- 游戏目录: GDWEAVE_CORE = <游戏>\SlotWeave\core\ -->
+        <!-- 开发阶段: 直接指向项目编译输出 -->
+        <Reference Include="SlotWeave">
+            <HintPath>$(GDWEAVE_CORE)\SlotWeave.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+</Project>

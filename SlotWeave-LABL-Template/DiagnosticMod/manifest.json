@@ -1,0 +1,11 @@
+﻿{
+    "Id": "gdweave.diagnostic",
+    "AssemblyPath": "DiagnosticMod.dll",
+    "Dependencies": [],
+    "Metadata": {
+        "Name": "SlotWeave Diagnostic Mod",
+        "Author": "SlotWeave",
+        "Version": "1.0.0",
+        "Description": "Runtime diagnostics for the GameStateBus architecture."
+    }
+}

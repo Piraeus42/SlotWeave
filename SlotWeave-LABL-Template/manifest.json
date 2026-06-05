@@ -1,0 +1,11 @@
+{
+  "Id": "MyMod",
+  "AssemblyPath": "MyMod.dll",
+  "Dependencies": [],
+  "Metadata": {
+    "Name": "My Mod",
+    "Version": "1.0.0",
+    "Author": "",
+    "Description": ""
+  }
+}

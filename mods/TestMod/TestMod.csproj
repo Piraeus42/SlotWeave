@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+        <SlotWeavePath Condition="'$(SlotWeavePath)' == ''">$(GDWEAVE_PATH)</SlotWeavePath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\SlotWeave\SlotWeave.csproj" />
+    </ItemGroup>
+
+    <Target Name="Deploy" AfterTargets="Build">
+        <Message Importance="high" Text="[Deploy] SlotWeavePath=$(SlotWeavePath)" />
+        <Warning Condition="'$(SlotWeavePath)' == ''"
+                 Text="SlotWeavePath not set — TestMod NOT deployed. Set GDWEAVE_PATH env var or pass -p:SlotWeavePath=..."/>
+        <Exec Condition="'$(SlotWeavePath)' != ''"
+              Command="xcopy /Y /I &quot;$(TargetDir)*&quot; &quot;$(SlotWeavePath)\mods\TestMod\&quot;" />
+        <Exec Condition="'$(SlotWeavePath)' != ''"
+              Command="copy /Y &quot;$(MSBuildProjectDirectory)\manifest.json&quot; &quot;$(SlotWeavePath)\mods\TestMod\&quot;" />
+    </Target>
+</Project>

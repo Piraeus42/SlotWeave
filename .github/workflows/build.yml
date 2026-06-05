@@ -1,4 +1,4 @@
-on: [push, pull_request]
+﻿on: [push, pull_request]
 name: Build
 
 jobs:
@@ -22,11 +22,11 @@ jobs:
             - name: Build
               run: ./package.ps1
 
-            - name: Upload GDWeave
+            - name: Upload SlotWeave
               uses: actions/upload-artifact@v3
               with:
-                  name: GDWeave
-                  path: ./local/GDWeave
+                  name: SlotWeave
+                  path: ./local/SlotWeave
             - name: Upload Thunderstore package
               uses: actions/upload-artifact@v3
               with:

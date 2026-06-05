@@ -1,4 +1,4 @@
-use isahc::ReadResponseExt;
+﻿use isahc::ReadResponseExt;
 use netcorehost::{error::HostingError, nethost, pdcstr, pdcstring::PdCString};
 use proxy_dll::proxy;
 use retour::static_detour;
@@ -54,11 +54,11 @@ fn init() -> Result<(), LoaderError> {
                 .unwrap()
                 .parent()
                 .unwrap()
-                .join("GDWeave")
+                .join("SlotWeave")
         });
     let core = dir.join("core");
-    let runtime_config_path = core.join("GDWeave.runtimeconfig.json");
-    let dll_path = core.join("GDWeave.dll");
+    let runtime_config_path = core.join("SlotWeave.runtimeconfig.json");
+    let dll_path = core.join("SlotWeave.dll");
 
     let hostfxr = nethost::load_hostfxr()?;
     let runtime_config_pdcstr = PdCString::from_os_str(runtime_config_path.as_os_str())
@@ -70,9 +70,9 @@ fn init() -> Result<(), LoaderError> {
     let loader = context.get_delegate_loader_for_assembly(dll_pdcstr)?;
 
     loader.get_function::<fn()>(
-        pdcstr!("GDWeave.GDWeave, GDWeave"),
+        pdcstr!("SlotWeave.SlotWeave, SlotWeave"),
         pdcstr!("Main"),
-        pdcstr!("GDWeave.GDWeave+MainDelegate, GDWeave"),
+        pdcstr!("SlotWeave.SlotWeave+MainDelegate, SlotWeave"),
     )?();
 
     Ok(())
@@ -107,8 +107,8 @@ pub fn main_detour() -> i32 {
         match e {
             LoaderError::LoadHostfxrError(_)
             | LoaderError::HostingError(HostingError::FrameworkMissingFailure) => {
-                let should_install_net = win_msgbox::information::<YesNo>("GDWeave couldn't load the .NET Runtime. Would you like to install it?\nDownloading the installer will take a moment. You'll need to restart the game after installation.")
-                    .title("GDWeave")
+                let should_install_net = win_msgbox::information::<YesNo>("SlotWeave couldn't load the .NET Runtime. Would you like to install it?\nDownloading the installer will take a moment. You'll need to restart the game after installation.")
+                    .title("SlotWeave")
                     .show()
                     .unwrap_or(YesNo::No);
 
@@ -119,7 +119,7 @@ pub fn main_detour() -> i32 {
                                 "Failed to install .NET:\n{:?}",
                                 e
                             ))
-                            .title("GDWeave")
+                            .title("SlotWeave")
                             .show()
                             .ok();
                         }
@@ -128,8 +128,8 @@ pub fn main_detour() -> i32 {
             }
 
             _ => {
-                win_msgbox::warning::<Okay>(&format!("GDWeave failed to start:\n{:?}", e))
-                    .title("GDWeave")
+                win_msgbox::warning::<Okay>(&format!("SlotWeave failed to start:\n{:?}", e))
+                    .title("SlotWeave")
                     .show()
                     .ok();
             }

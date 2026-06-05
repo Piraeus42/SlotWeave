@@ -1,0 +1,11 @@
+﻿{
+    "Id": "sloticon.crash.repro",
+    "AssemblyPath": "SlotIconCrashRepro.dll",
+    "Dependencies": [],
+    "Metadata": {
+        "Name": "SlotIcon Crash Repro",
+        "Version": "1.0.0",
+        "Author": "SlotWeave",
+        "Description": "Minimal repro: appends a noop function to Slot Icon.tscn::1. If this crashes, ANY text change to hot-path scripts triggers Godot 3.4.4 bug."
+    }
+}

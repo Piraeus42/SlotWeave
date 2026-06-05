@@ -1,4 +1,4 @@
-# Contributing to GDWeave
+﻿# Contributing to SlotWeave
 
 Most problems with contributions aren't hard blockers for merge, as they are usually stylistic and can be fixed later.
 

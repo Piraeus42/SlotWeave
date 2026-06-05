@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Version>2.0.17.0</Version>
+        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+        <SlotWeavePath Condition="'$(SlotWeavePath)' == ''">$(GDWEAVE_PATH)</SlotWeavePath>
+
+        <!-- required for loader -->
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Reloaded.Hooks" Version="4.3.0"/>
+        <PackageReference Include="Reloaded.Memory.Sigscan" Version="3.1.6"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
+    </ItemGroup>
+
+    <Target Name="Deploy" AfterTargets="Build">
+        <Message Importance="high" Text="[Deploy] SlotWeavePath=$(SlotWeavePath)" />
+        <Warning Condition="'$(SlotWeavePath)' == ''"
+                 Text="SlotWeavePath not set — core NOT deployed. Set GDWEAVE_PATH env var or pass -p:SlotWeavePath=..."/>
+        <Exec Condition="'$(SlotWeavePath)' != ''"
+              Command="xcopy /Y /I &quot;$(TargetDir)&quot; &quot;$(SlotWeavePath)\core&quot;" />
+    </Target>
+</Project>

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Version>1.0.0</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\SlotWeave\SlotWeave.csproj" />
+    </ItemGroup>
+
+    <!-- Exclude WinForms overlay (Microsoft.WindowsDesktop.App not available in-game) -->
+    <ItemGroup>
+        <Compile Remove="DebugOverlay.cs" />
+    </ItemGroup>
+
+    <!-- Copy to mods directory for testing -->
+    <Target Name="DeployMod" AfterTargets="Build">
+        <PropertyGroup>
+            <ModDeployDir>D:\steam\steamapps\common\Luck be a Landlord\SlotWeave\mods\gdweave.diagnostic</ModDeployDir>
+        </PropertyGroup>
+        <MakeDir Directories="$(ModDeployDir)" />
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(ModDeployDir)" />
+        <Copy SourceFiles="manifest.json" DestinationFolder="$(ModDeployDir)" />
+        <Message Importance="high" Text="[Deploy] DiagnosticMod → $(ModDeployDir)" />
+    </Target>
+</Project>
