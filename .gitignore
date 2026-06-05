@@ -24,5 +24,9 @@ source_code/
 # Dumped game scripts
 scripts/
 
+# Dev-only test and diagnostic code
+Testing/
+mods/TestMod/
+
 # Claude session data
 .claude/
