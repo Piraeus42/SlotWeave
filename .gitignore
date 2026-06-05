@@ -13,6 +13,9 @@ thunderstore/
 *.bat
 *.ps1
 
+# Build artifacts (NuGet + compiled output)
+core/
+
 # Debug / temp artifacts
 
 # Engine source (do not commit)
