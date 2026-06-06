@@ -15,9 +15,13 @@ internal class ModLoader {
     private readonly PatchManager patchManager;
     private readonly GameStateBus? gameStateBus;
 
-    /// <summary>Active mods as (Id, Version) tuples for cache key computation.</summary>
-    public List<(string Id, string Version)> ActiveModVersions =>
-        this.LoadedMods.Select(m => (m.Manifest.Id, m.Manifest.Metadata?.Version ?? "0.0.0")).ToList();
+    /// <summary>Active mods as (Id, Version, ContentHash) tuples for cache key computation.</summary>
+    public List<(string Id, string Version, string ContentHash)> ActiveModVersions =>
+        this.LoadedMods.Select(m => (
+            m.Manifest.Id,
+            m.Manifest.Metadata?.Version ?? "0.0.0",
+            m.ContentHash
+        )).ToList();
 
     public ModLoader(PatchManager patchManager, GameStateBus? gameStateBus = null) {
         this.patchManager = patchManager;

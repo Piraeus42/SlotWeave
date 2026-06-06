@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SlotWeave.GameState;
@@ -14,6 +15,28 @@ namespace SlotWeave;
 internal class SlotWeave {
     public static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
     public static readonly string Version = Assembly.GetName().Version!.ToString();
+
+    /// <summary>
+    /// SHA256 of SlotWeave.dll — used in cache keys and cache invalidation.
+    /// Any change to the SlotWeave assembly triggers a full cache clear, even if
+    /// the assembly version string wasn't bumped (e.g. hotfix / dev builds).
+    /// </summary>
+    public static readonly string SelfHash = ComputeSelfHash();
+
+    private static string ComputeSelfHash()
+    {
+        try
+        {
+            var dllPath = Assembly.Location;
+            if (!string.IsNullOrEmpty(dllPath) && File.Exists(dllPath))
+                return Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(dllPath))).ToLowerInvariant();
+        }
+        catch { /* fall through to fallback */ }
+        // Fallback: if we can't hash the file, use the version string so
+        // the cache still functions (version-bump invalidation still works).
+        return Version;
+    }
+
     public static string GameDir = null!;
     public static string SlotWeaveDir = null!;
 

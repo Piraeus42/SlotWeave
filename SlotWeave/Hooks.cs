@@ -28,7 +28,7 @@ internal unsafe class Hooks {
     private readonly SourceModder modder;
     private readonly Interop interop;
     private readonly CacheManager cache;
-    private readonly List<(string Id, string Version)> activeModVersions;
+    private readonly List<(string Id, string Version, string ContentHash)> activeModVersions;
 
     private const int RVA_STRING_RESIZE = 0x14D10;
 
@@ -40,7 +40,7 @@ internal unsafe class Hooks {
     }
 
     public Hooks(SourceModder modder, Interop interop, CacheManager cache,
-                 List<(string Id, string Version)> activeModVersions) {
+                 List<(string Id, string Version, string ContentHash)> activeModVersions) {
         this.modder = modder;
         this.interop = interop;
         this.cache = cache;
